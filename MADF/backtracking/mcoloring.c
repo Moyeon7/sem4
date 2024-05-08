@@ -1,19 +1,26 @@
 #include <stdio.h>
 #define N 20
 
-int G[N][N], count = 0;
+int G[N][N], count = 0, count2 = 1, soln=0;
 
 void show(int x[N], int nodes){
-    printf("%d\t", ++count);
-    for (int i = 1; i <= nodes; i++)
-        printf("%d ", x[i]); 
-    printf("\n");
+    int p;
+    printf("\nLeaf Node: %d.\t",count2++);
+    for (int i = 1; i <= nodes; i++){
+        p=i;
+        if(x[i]==0){
+            printf("x[%d]=%d\t", i,x[i]);
+            return; //break;
+        }else{
+            printf("x[%d]=%d\t", i,x[i]);
+        }
+    }
+    printf("x[%d]=%d\t", p+1,x[1]);
 }
-
 void nextval(int x[N], int nodes, int colors, int k){
     do{
         x[k] = (x[k] + 1) % (colors + 1); 
-        if (!x[k])                       
+        if (x[k]==0)                       
             return;
         int j;
         for (j = 1; j <= nodes; j++){
@@ -25,16 +32,23 @@ void nextval(int x[N], int nodes, int colors, int k){
     } while (1);
 }
 
-void color(int x[N], int nodes, int colors, int k){
+void color2(int x[N], int nodes, int colors, int k){
     do{
+        // if(count2==1)
+            // show(x,nodes);
         nextval(x, nodes, colors, k);
-        if (!x[k])
-            return; 
-        if (k == nodes)
+        if (x[k]==0){
             show(x, nodes);
+            printf("\t\tBound");
+            return;
+        }
+        if (k == nodes){
+            show(x,nodes);
+            printf("\tSolution");
+            soln++;
+        }
         else
-            color(x, nodes, colors, k + 1);
-
+            color2(x, nodes, colors, k + 1);
     } while (1);
 }
 
@@ -62,7 +76,7 @@ int chromatic(int nodes){
     return result;
 }
 
-int main(int argc, char const *argv[]){
+int main(){
     int nodes, edges, colors, o, d, x[N];
     printf("Enter the number of nodes: "), scanf("%d", &nodes);
 
@@ -80,7 +94,10 @@ int main(int argc, char const *argv[]){
     for (int i = 1; i <= nodes; i++)
         x[i] = 0;
     printf("\nThe possible ways to color the nodes of the graph are\n");
-    color(x, nodes, colors, 1);
+    color2(x, nodes, colors, 1);
+
+    printf("\nChromatic number of the graph: %d\n",colors);
+    printf("Number of solutions: %d\n",soln);
     return 0;
 }
 
